@@ -68,7 +68,7 @@ func dataDownloadFile() *schema.Resource {
                         "verify_sha": {
                                 Type:        schema.TypeString,
                                 Optional:    true,
-                                Description: "SHA checksum to verify",
+                                Description: "SHA1 checksum to verify",
                         },
                         "verify_md5": {
                                 Type:        schema.TypeString,
@@ -114,12 +114,12 @@ func dataDownloadFileRead(ctx context.Context, d *schema.ResourceData, m interfa
 	d.Set("output_md5", md5)
 	d.Set("output_size", fi.Size())
 
-	d.SetId(url)
+	d.SetId(sha256)
 
 	return diags
 }
 
-func Verify(d *schema.ResourceData, sha256 string, sha string, md5 string) error {
+func Verify(d *schema.ResourceData, sha256 string, sha1 string, md5 string) error {
 	if v, ok := d.GetOk("verify_sha256"); ok {
 		if v.(string) != sha256 {
 			return errors.New("SHA256 signature mismatch")
@@ -127,8 +127,8 @@ func Verify(d *schema.ResourceData, sha256 string, sha string, md5 string) error
 	}
 
         if v, ok := d.GetOk("verify_sha"); ok {
-                if v.(string) != sha {
-                        return errors.New("SHA signature mismatch")
+                if v.(string) != sha1 {
+                        return errors.New("SHA1 signature mismatch")
                 }
         }
 
