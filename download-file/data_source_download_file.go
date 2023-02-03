@@ -10,7 +10,6 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"net/http"
 	"os"
 
@@ -43,38 +42,38 @@ func dataDownloadFile() *schema.Resource {
 				ForceNew:    true,
 				Description: "MD5 of output file",
 			},
-                        "output_sha": {
-                                Type:        schema.TypeString,
-                                Computed:    true,
-                                ForceNew:    true,
-                                Description: "SHA1 checksum of output file",
-                        },
-                        "output_sha256": {
-                                Type:        schema.TypeString,
-                                Computed:    true,
-                                ForceNew:    true,
-                                Description: "SHA256 checksum of output file",
-                        },
+			"output_sha": {
+				Type:        schema.TypeString,
+				Computed:    true,
+				ForceNew:    true,
+				Description: "SHA1 checksum of output file",
+			},
+			"output_sha256": {
+				Type:        schema.TypeString,
+				Computed:    true,
+				ForceNew:    true,
+				Description: "SHA256 checksum of output file",
+			},
 			"output_size": &schema.Schema{
 				Type:     schema.TypeInt,
 				Computed: true,
 				ForceNew: true,
 			},
-                        "verify_sha256": {
-                                Type:        schema.TypeString,
-                                Optional:    true,
-                                Description: "SHA256 checksum to verify",
-                        },
-                        "verify_sha": {
-                                Type:        schema.TypeString,
-                                Optional:    true,
-                                Description: "SHA1 checksum to verify",
-                        },
-                        "verify_md5": {
-                                Type:        schema.TypeString,
-                                Optional:    true,
-                                Description: "MD5 checksum to verify",
-                        },
+			"verify_sha256": {
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "SHA256 checksum to verify",
+			},
+			"verify_sha": {
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "SHA1 checksum to verify",
+			},
+			"verify_md5": {
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "MD5 checksum to verify",
+			},
 		},
 	}
 }
@@ -82,8 +81,8 @@ func dataDownloadFile() *schema.Resource {
 func dataDownloadFileRead(ctx context.Context, d *schema.ResourceData, m interface{}) diag.Diagnostics {
 	var diags diag.Diagnostics
 
-	url := d.Get("url").(string)
 	outputFile := d.Get("output_file").(string)
+	url := d.Get("url").(string)
 
 	err := DownloadFile(outputFile, url)
 
@@ -126,17 +125,17 @@ func Verify(d *schema.ResourceData, sha256 string, sha1 string, md5 string) erro
 		}
 	}
 
-        if v, ok := d.GetOk("verify_sha"); ok {
-                if v.(string) != sha1 {
-                        return errors.New("SHA1 signature mismatch")
-                }
-        }
+	if v, ok := d.GetOk("verify_sha"); ok {
+		if v.(string) != sha1 {
+			return errors.New("SHA1 signature mismatch")
+		}
+	}
 
-        if v, ok := d.GetOk("verify_md5"); ok {
-                if v.(string) != md5 {
-                        return errors.New("MD5 signature mismatch")
-                }
-        }
+	if v, ok := d.GetOk("verify_md5"); ok {
+		if v.(string) != md5 {
+			return errors.New("MD5 signature mismatch")
+		}
+	}
 
 	return nil
 }
@@ -164,7 +163,7 @@ func DownloadFile(filepath string, url string) error {
 }
 
 func genFileShas(filename string) (string, string, string, string, error) {
-	data, err := ioutil.ReadFile(filename)
+	data, err := os.ReadFile(filename)
 	if err != nil {
 		return "", "", "", "", fmt.Errorf("could not compute file '%s' checksum: %s", filename, err)
 	}
