@@ -6,7 +6,7 @@ terraform {
     }
     download = {
       version = "~> 0.0.1"
-      source  = "github.com/bjunker99/download-file"
+      source  = "terraform-registry.bjunker99.com/bjunker99/download-file"
     }
   }
 }
